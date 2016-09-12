@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"	
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	http://code.alibabatech.com/schema/dubbo        
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+    http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-4.1.xsd"
+	default-lazy-init="false"> 
+ 	
+ 	<util:properties id="dubboProperties"
+		location="classpath:properties/ipConfig.properties" />
+ 		
+    <dubbo:application name="zlebank_portal"  owner="tangxc"/>
+ 
+    <dubbo:registry id="zk-128" address="zookeeper://#{dubboProperties['zk.ip']}:#{dubboProperties['zk.port']}" 
+    check="false" subscribe="true" register="true" />
+ 
+    <dubbo:protocol name="dubbo" port="20893" />
+    
+    <dubbo:provider id="portal_4_all" threads="100" threadpool="fixed" accepts="100"
+     timeout="5000" retries="1" connections="5" loadbalance="random" registry="zk-128" />
+
+    <dubbo:consumer check="false" />
+
+ 	<import resource="classpath*:/spring/dubbo-provider.xml" />
+ 	<import resource="classpath*:/spring/dubbo-consumer.xml" />
+  
+</beans>
