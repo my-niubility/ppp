@@ -32,7 +32,7 @@
 	<!-- Spring framework logger -->
 	<logger name="org.springframework" level="error" additivity="false"></logger>
 	<logger name="com.alibaba" level="error" additivity="false"></logger>
-	<logger name="com.zlebank" level="info" additivity="true"></logger>
+	<logger name="com.nbl" level="info" additivity="true"></logger>
 
 	<root level="info">
 		<appender-ref ref="appLogAppender" />
