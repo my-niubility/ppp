@@ -10,7 +10,7 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 
 	<mvc:annotation-driven />
-	<context:component-scan base-package="com.zlebank.controller" />
+	<context:component-scan base-package="com.nbl.controller" />
 	<bean id="stringConverter"
 		class="org.springframework.http.converter.StringHttpMessageConverter">
 		<property name="supportedMediaTypes">
@@ -22,7 +22,7 @@
 	</bean>
 
 	<!-- constom objectMapper set add by xuchu-tang -->
-	<bean id="objectMapper" class="com.zlebank.utils.json.CustomObjectMapper"
+	<bean id="objectMapper" class="com.nbl.utils.json.CustomObjectMapper"
 		init-method="init">
 		<property name="camelCaseToLowerCaseWithUnderscores" value="true" />
 		<property name="dateFormatPattern" value="yyyy-MM-dd HH:mm:ss" />
@@ -61,5 +61,5 @@
 		p:defaultEncoding="utf-8" />
 
 	<aop:aspectj-autoproxy proxy-target-class="true" />
-	<bean class="com.zlebank.utils.LogUtil" />
+	<bean class="com.nbl.utils.LogUtil" />
 </beans>  
