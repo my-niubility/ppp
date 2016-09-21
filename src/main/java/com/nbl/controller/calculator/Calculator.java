@@ -3,6 +3,7 @@ package com.nbl.controller.calculator;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -28,6 +29,7 @@ import com.nbl.util.AmtParseUtil;
 import com.nbl.utils.BeanParseUtils;
 import com.nbl.utils.RateCountUtil;
 import com.nbl.utils.json.ResponseJson;
+import com.nbl.controller.calculator.Calculator;
 
 /**
  * 预期收益计算器
@@ -76,7 +78,7 @@ public class Calculator {
 		return new ResponseJson().success(calRes);
 	}
 
-	private void calExpBenCheck(CalculatorInfo calculator) throws MyBusinessCheckException {
+	private static void calExpBenCheck(CalculatorInfo calculator) throws MyBusinessCheckException {
 		if (RepayMode.parseOf(calculator.getRepayMode()) == null)
 			throw new MyBusinessCheckException(ErrorCode.POC008, "repayMode");
 		if (!StringUtils.isEmpty(calculator.getYearDay()) && YearDay.parseOf(calculator.getYearDay()) == null)
@@ -88,6 +90,26 @@ public class Calculator {
 			if (StringUtils.isEmpty(calculator.getInvestPeriodMonth()))
 				throw new MyBusinessCheckException(ErrorCode.POC006, "investPeriodMonth");
 		}
+		//金额是否为保留两位的小数
+		if(!(Pattern.compile("^[0-9]+\\.{0,1}[0-9]{0,2}$").matcher(calculator.getInvestAmt()).matches())){
+			throw new MyBusinessCheckException(ErrorCode.POC008, "investAmt");
+		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("-------start---------");
+		CalculatorInfo calculatorInfo = new CalculatorInfo();
+		calculatorInfo.setInvestAmt("10000000");
+		calculatorInfo.setInvestPeriodDay("1");
+		calculatorInfo.setRepayMode("1");
+		calculatorInfo.setYearRate("8.00");
+		calculatorInfo.setYearDay("360");
+		try {
+			calExpBenCheck(calculatorInfo);
+		} catch (MyBusinessCheckException e) {
+			System.out.println(e.getErrMsgKey());
+		}
+		System.out.println("-------end---------");
 	}
 
 }

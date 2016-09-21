@@ -119,4 +119,8 @@ public class ErrorCode {
 	 * 验证码[%s]输入错误
 	 */
 	public static final String POP001 = "POP001|时间转换异常";
+	/**
+	 * 输入手机号与注册手机号不符
+	 */
+	public static final String POC024 = "POC024|输入手机号与注册手机号不符";
 }

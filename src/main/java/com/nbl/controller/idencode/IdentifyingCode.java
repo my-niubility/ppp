@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -97,10 +99,11 @@ public class IdentifyingCode {
 			MsgPicCertCodeUtil.checkMsgCertCodeTime(msgCertCode.getPhoneNum());
 			// 短信验证码使用场景、custId非空、用户是否登录校验
 			businessCheck(msgCertCode);
+			//用户输入手机号与注册手机号是否相同校验
+			phoneNumCheck(msgCertCode);
 			// 生成短信验证码
 			certCode = CertCodeUtil.getRegMsgCertCode();
 			logger.info("[phoneNum]:" + msgCertCode.getPhoneNum() + "|" + "[certCodeUtil]:" + certCode);
-
 			if (ComConst.TRUE.equals(generalParameterApp.getValueByCode(ParamKeys.MCC_MODE.getValue()))) {
 				// 生产短信网关
 				String des = generalParameterApp.getValueByCode(ParamKeys.MCC_CONT.getValue()).replaceFirst("%s", certCode);
@@ -283,9 +286,32 @@ public class IdentifyingCode {
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(5);
+				} catch (InterruptedException e) {
+				}
 				refreshCache();
 			}
 		}
 
+	}
+	
+	public void phoneNumCheck(MsgCertCode msgCertCode) throws MyBusinessCheckException{
+		//手机号合法性校验
+		String phoneNum = msgCertCode.getPhoneNum();
+		String regexPhoneNum = "^((13[0-9])|(14[0-9])|(15[0-9])|(17[0-9])|(18[0-9]))\\d{8}$";
+		Pattern patternPhoneNum = Pattern.compile(regexPhoneNum);
+		if(!patternPhoneNum.matcher(phoneNum).matches()){
+			throw new MyBusinessCheckException(ErrorCode.POC008, "phoneNum");
+		}
+		//场景为非注册场景下手机号与注册手机号是否相同校验
+		String regexCertBusCase = "^[0][2-9]$";
+		Pattern patternCertBusCase = Pattern.compile(regexCertBusCase);
+		if(patternCertBusCase.matcher(msgCertCode.getCertBusCase()).matches()){
+			UserInfo userInfo = (UserInfo) session.getAttribute(SessionKeys.USER_INFO.getValue());
+			if(!userInfo.getMobile().equals(phoneNum)){
+				throw new MyBusinessCheckException(ErrorCode.POC024, "phoneNum");
+			}
+		}
 	}
 }

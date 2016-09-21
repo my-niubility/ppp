@@ -31,6 +31,14 @@ public class LogoutInfo implements Serializable {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
+	
+	public String getCustId() {
+		return custId;
+	}
+
+	public void setCustId(String custId) {
+		this.custId = custId;
+	}
 
 	@Override
 	public String toString() {

@@ -1,5 +1,7 @@
 package com.nbl.controller.account;
 
+import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -62,6 +64,8 @@ public class PasswordManage {
 			setPayPwdCheck(payPwdInfo);
 			//忘记密码，重新设置
 			if (SetPwdType.SET_NEW_PAY_PWD.getValue().equals(payPwdInfo.getSetType())) {
+				//手机号校验
+				phoneNoCheck(userInfo, payPwdInfo);
 				//短信验证码校验，重置密码时短信验证码不能为空，修改密码时短信验证码为空
 				MsgPicCertCodeUtil.checkMsgCertCode(session, payPwdInfo.getMsgIdenCode(), userInfo.getMobile());
 			}
@@ -145,6 +149,19 @@ public class PasswordManage {
 		resp = new ResponseJson().success();
 
 		return resp;
+	}
+	
+	public void phoneNoCheck(UserInfo userInfo,PayPwdInfo payPwdInfo) throws MyBusinessCheckException {
+		String phoneNum = payPwdInfo.getPhoneNum();
+		String regex = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
+		Pattern pattern = Pattern.compile(regex);
+		if(!pattern.matcher(phoneNum).matches()){
+			throw new MyBusinessCheckException(ErrorCode.POC008, "phoneNum");
+		}
+		//用户输入手机号是否为默认手机号校验
+		if(!phoneNum.equals(userInfo.getMobile())){
+			throw new MyBusinessCheckException(ErrorCode.POC024, "phoneNum");
+		}
 	}
 
 }

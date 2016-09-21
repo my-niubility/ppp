@@ -1,5 +1,7 @@
 package com.nbl.controller.account;
 
+import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -123,6 +125,9 @@ public class AccWithdraw {
 			throw new MyBusinessCheckException(ErrorCode.POC008, "withdrawType");
 		if (!WithdrawType.GENERAL.getValue().equals(withdrawInfo.getWithdrawType()))
 			throw new MyBusinessCheckException(ErrorCode.POB001, "目前只支持普通提现");
+		//提现金额最小为为保留两位小数
+		if (!(Pattern.compile("^[0-9]+\\.{0,1}[0-9]{0,2}$").matcher(withdrawInfo.getWithdrawAmt()).matches()))
+			throw new MyBusinessCheckException(ErrorCode.POC008, "withdrawAmt");
 		// 余额校验
 		BalanceInfoQueryDto reqParam = new BalanceInfoQueryDto(withdrawInfo.getCustId(), PayChanlCode.ZLZB.getValue());
 		BalanceInfoResultDto result = userInfoQueryApp.queryUsableBalance(reqParam);

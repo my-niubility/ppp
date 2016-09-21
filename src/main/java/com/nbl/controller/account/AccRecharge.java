@@ -1,5 +1,7 @@
 package com.nbl.controller.account;
 
+import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -121,6 +123,8 @@ public class AccRecharge {
 			throw new MyBusinessCheckException(ErrorCode.POC008, "custType");
 		if (!RechargeType.SHORTCUT.getValue().equals(rechargeInfo.getRechargeType()))
 			throw new MyBusinessCheckException(ErrorCode.POB001, "目前只支持快捷支付充值");
+		if (!(Pattern.compile("^[0-9]+\\.{0,1}[0-9]{0,2}$").matcher(rechargeInfo.getRechargeAmt()).matches()))
+			throw new MyBusinessCheckException(ErrorCode.POC008, "withdrawAmt");
 		// if (!TokenCheck.SUCCESS.getValue()
 		// .equals(JWTutils.verifyTokenAndRemove(rechargeInfo.getToken(),
 		// rechargeInfo.getCustId())))
