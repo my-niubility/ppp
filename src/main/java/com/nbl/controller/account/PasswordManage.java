@@ -153,7 +153,7 @@ public class PasswordManage {
 	
 	public void phoneNoCheck(UserInfo userInfo,PayPwdInfo payPwdInfo) throws MyBusinessCheckException {
 		String phoneNum = payPwdInfo.getPhoneNum();
-		String regex = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
+		String regex = "^((13[0-9])|(14[0-9])|(15[0-9])|(17[0-9])|(18[0-9]))\\d{8}$";
 		Pattern pattern = Pattern.compile(regex);
 		if(!pattern.matcher(phoneNum).matches()){
 			throw new MyBusinessCheckException(ErrorCode.POC008, "phoneNum");
